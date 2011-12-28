@@ -1,0 +1,64 @@
+/* Write the Argument List to a File with writev
+ * Writes its command-line arguments to a file using a 
+ * single writec call. The first arguement is the name of the file; the second and
+ * susequent arguments are written to the file of that name, one on each line.
+ * The program allocates an array of struct iovec elements that is twice as long as 
+ * the number of arguments it is writing-- for each argument it writes the text of the 
+ * argument itself as well as a new line character. Because we don't know the number of 
+ * arguments in advance, the array is allocated using malloc. */
+
+#include <fcntl.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/uio.h>
+#include <unistd.h>
+
+int main (int argc, char* argv[])
+{
+   int fd;
+   struct iovec* vec;
+   struct iovec* vec_next;
+   int i;
+
+   /* We'll need a "buffer" containing a newline character. Use an
+    * ordinary char variable for this. */
+   char newline = '\n';
+   /*The first command-line argument is the output filename. */
+   char* filename = argv[1];
+
+   /* Skip past the first two elements of the argument list. Element
+    * 0 is the name of this program, and element 1 is the output
+    * filename. */
+   argc -= 2;
+   argv += 2;
+   
+   /* Allocate an array of iovec elements. We'll need two for each
+    * element of the argument list, one for the text itself, and one for
+    * a newline. */
+   vec = (struct iovec*) malloc (2 * argc * sizeof (struct iovec));
+
+   /* Loop over the argument list, building the iovec entries. */
+   vec_next = vec;
+   for (i = 0; i < argc; i++) {
+      /* The first element is the text of the argument itself. */
+      vec_next->iov_base = argv[i];
+      vec_next->iov_len = strlen (argv[i]);
+      ++vec_next;
+      /* The second element is a single newline character. It's okay for
+       * multiple elements of the struct iovec array to point to the
+       * same region of memory.  */ 
+      vec_next->iov_base = &newline;
+      vec_next->iov_len = 1;
+      ++vec_next;
+   }
+
+   /* Write the arguments to a file. */
+   fd = open (filename, O_WRONLY | O_CREAT);
+   writev (fd, vec, 2 * argc);
+
+   close (fd);
+
+   free(vec);
+   return 0; /* indicates successful termination */
+}/*end main*/
