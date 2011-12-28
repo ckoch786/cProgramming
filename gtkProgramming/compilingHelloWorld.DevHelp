@@ -1,0 +1,30 @@
+To compile use:
+
+gcc -Wall -g helloworld.c -o helloworld `pkg-config --cflags gtk+-2.0` \
+`pkg-config --libs gtk+-2.0`
+
+This uses the program pkg-config, which can be obtained from www.freedesktop.org. This program reads the .pc which comes with GTK to determine what compiler switches are needed to compile programs that use GTK. pkg-config --cflags gtk+-2.0 will output a list of include directories for the compiler to look in, and pkg-config --libs gtk+-2.0 will output the list of libraries for the compiler to link with and the directories to find them in. In the above example they could have been combined into a single instance, such as pkg-config --cflags --libs gtk+-2.0.
+
+Note that the type of single quote used in the compile command above is significant.
+
+The libraries that are usually linked in are:
+
+The GTK library (-lgtk), the widget library, based on top of GDK.
+
+The GDK library (-lgdk), the Xlib wrapper.
+
+The gdk-pixbuf library (-lgdk_pixbuf), the image manipulation library.
+
+The Pango library (-lpango) for internationalized text.
+
+The gobject library (-lgobject), containing the type system on which GTK is based.
+
+The gmodule library (-lgmodule), which is used to load run time extensions.
+
+The GLib library (-lglib), containing miscellaneous functions; only g_print() is used in this particular example. GTK is built on top of GLib so you will always require this library. See the section on GLib for details.
+
+The Xlib library (-lX11) which is used by GDK.
+
+The Xext library (-lXext). This contains code for shared memory pixmaps and other X extensions.
+
+The math library (-lm). This is used by GTK for various purposes.

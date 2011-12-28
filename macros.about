@@ -1,0 +1,39 @@
+The #define directive creates 
+`symbolic constants'-- constants represented as symbols
+and `macros'-- operations defined as symbols. The #define
+directive format is 
+  #define identifier replacement-text
+  #define PI         3.14159
+
+Convention is, symbolic constants are defined using only uppercase letters and underscores.
+
+A `macro' is an identifier defined in a #define preprocessor directive. As with symbolic 
+constants, the `macro-identifier' is replaced in the program with the `replace-text'
+before the program is compiled. Macros may be defined with or without `arguments'. A macro
+without arguments is processed like a symblic constant. In a `macro with arguments', the
+arguments are substituted in the replacement text, when the macro is `expanded'--i.e, 
+the replacement-text replaces the identifier and argument list in the program. [Note: A
+sybolic constant is a type of macro.]
+  Consider the following macro definition with one argument for the area of a circle:
+     #define CIRCLE_AREA(x) ( (PI) * (x) *(x) )
+  Wherever CIRCLE_AREA(y) appears in the file, the value of y is substituted for x in the
+  replacement-test, the symbolic constant PI is replaced by its value( defined previously) and
+  the macro is expanded in the program. For example, the statement 
+     area = CIRCLE_AREA( 4 );
+  is expaned to 
+     area = ( (3.14159) * (4) * (4) );
+  and the value of the expression is evaluated and assigned to variable area.
+  The macro CIRCLE_AREA could be defined as a function. Function circleArea
+     double circleArea(double x)
+     {
+        return 3.14159 * x * x;
+     }
+  performs the same calculation as macro CIRCLE_AREA, but the overhead of a function call
+  is associated with function circleArea. The advantage of the macro CIRCLE_AREA are that 
+  macros insert code directly in the program--avoiding function call overhead--and the 
+  program remains readable because the CIRCLE_AREA calculation is defined separetly and 
+  named meaningfully. A disadvantage is that its argument is evaluated twice.
+
+Directive #undef "undefines" a symbolic constant or macro name. The `scope' of 
+a symbolic constant or macro is from its definition until it is undefined with #undef, or
+until the end of the file. Once undefined, a name can be redefined with #define.
